@@ -2,8 +2,47 @@
 require('../config/config')
 const Producto = require('../models/producto.module');
 const ObjectID = require('mongodb').ObjectID;   
+var amqp = require('amqplib/callback_api');
 
 class ProductoController{
+
+    static async send1(req, res){
+	
+
+	amqp.connect('amqp://localhost', function(error0, connection) {
+	    if (error0) {
+		throw error0;
+	    }
+	    connection.createChannel(function(error1, channel) {
+		if (error1) {
+		    throw error1;
+		}
+
+		var queue = 'hello';
+		var msg = 'Hello World!';
+
+		channel.assertQueue(queue, {
+		    durable: false
+		});
+		channel.sendToQueue(queue, Buffer.from(msg));
+
+		console.log(" [x] Sent %s", msg);
+	    });
+	    setTimeout(function() {
+		connection.close();
+		process.exit(0);
+	    }, 500);
+
+	    res.status(200).json(
+		    {
+		        data: "todo bien, es un test",
+		        port_MONGO: process.env.MONGO_SERVICE_PORT,
+		        host_MONGO: process.env.MONGO_SERVICE_HOST,
+		        url_MONGO: process.env.DATABASE_URL
+		    }
+		)
+	});        
+    }
 
     static async test(req, res){
         res.status(200).json(

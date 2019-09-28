@@ -3,6 +3,7 @@ const ProductoCtrl = require('../controllers/producto.controller')
 const producto = express.Router();
 
 producto
+.get('/send1', ProductoCtrl.send1)
 .get('/test', ProductoCtrl.test)
 .get('/productos', ProductoCtrl.index)
 .post('/productos', ProductoCtrl.store)
